@@ -17,6 +17,7 @@ Repository settings or organization policy must permit Actions to write reposito
 - All open and closed **issues**, with each full issue comment.
 - All open and closed **pull requests**, general comments, review summaries, inline review comments/replies (`in_reply_to_id` and original context retained), and changed-file metadata/available patches.
 - **Releases**, full notes, paginated release assets/binaries, and repository tag metadata with commit references.
+- The repository's main **README**, its original source/API metadata, and uploaded media referenced there.
 - GitHub-uploaded images, video, audio, PDFs and other files linked in those records, including Markdown, HTML `src` and bare attachment URLs. Legacy GitHub attachment hosts are recognized.
 - Raw JSON alongside readable Markdown. Readable copies point to the downloaded local assets; original URLs remain in raw JSON and the manifest.
 - A manifest with source-to-file mapping, SHA-256 hashes, byte sizes, source records, snapshot times and failures. On reruns, cached assets are reused only after their hashes are checked; corrupted or previously failed assets are downloaded again.

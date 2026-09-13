@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import argparse
+import base64
 import datetime as dt
 import hashlib
 import html
@@ -323,6 +324,39 @@ class Archive:
                 rendered = rendered.replace(url, "../" + asset["path"])
         destination.with_suffix(".md").write_text(rendered, encoding="utf-8")
 
+    def save_readme(self, prefix):
+        try:
+            record = self.client.json(prefix + "/readme")
+        except RuntimeError as error:
+            if str(error) == "GitHub HTTP 404":
+                self.manifest["readme"] = None
+                return
+            raise
+        if record.get("encoding") != "base64":
+            raise RuntimeError("README API response does not contain full base64 content")
+        content = base64.b64decode(record["content"], validate=False)
+        if record.get("size") is not None and len(content) != record["size"]:
+            raise RuntimeError("README content length does not match API metadata")
+        original = content.decode("utf-8", errors="replace")
+        directory = self.output / "repository"
+        directory.mkdir(exist_ok=True)
+        dump_json(directory / "README.json", record)
+        (directory / "README.original.md").write_bytes(content)
+        for url in sorted(attachment_urls(original)):
+            if is_placeholder_url(url):
+                self.manifest["ignored_urls"].append({"url": url, "source": "repository/README",
+                    "reason": "Explicit all-x example placeholder; original text retained"})
+            else:
+                self.download(url, "repository/README")
+        rendered = original
+        for url, asset in sorted(self.assets.items(), key=lambda pair: -len(pair[0])):
+            if asset["status"] == "saved":
+                rendered = rendered.replace(url, "../" + asset["path"])
+        (directory / "README.md").write_text(rendered, encoding="utf-8")
+        self.manifest["readme"] = {"source_path": record.get("path"), "sha": record.get("sha"),
+            "path": "repository/README.md", "original": "repository/README.original.md",
+            "metadata": "repository/README.json"}
+
     def run(self):
         prefix = "/repos/" + self.repository
         try:
@@ -356,6 +390,9 @@ class Archive:
                     self.download(asset["browser_download_url"], f"releases/{item['id']}", asset["url"])
                 self.save_record("releases", item["id"], item)
                 print(f"Saved release {item.get('tag_name', item['id'])}", flush=True)
+            self.save_readme(prefix)
+            print("Saved repository README and its uploaded attachments" if self.manifest.get("readme")
+                  else "Repository has no public README", flush=True)
             self.manifest["complete"] = not self.errors
         except Exception as error:
             self.errors.append({"source": "api", "error": str(error).split("https://", 1)[0][:200]})
@@ -379,8 +416,10 @@ class Archive:
             for identifier in sorted(self.record_paths[folder], key=int):
                 lines.append(f"- [{heading} {identifier}]({folder}/{identifier}.md) · [raw JSON]({folder}/{identifier}.json)")
             lines.append("")
+        if self.manifest.get("readme"):
+            lines += ["## Repository README", "", "[Readable copy with local media](repository/README.md) · [Original source](repository/README.original.md) · [API metadata](repository/README.json)", ""]
         (self.output / "README.md").write_text("\n".join(lines), encoding="utf-8")
-        (self.output / ".gitattributes").write_text("/assets/** -text\n", encoding="utf-8")
+        (self.output / ".gitattributes").write_text("/assets/** -text\n/repository/README.original.md -text\n", encoding="utf-8")
 
 
 def main():

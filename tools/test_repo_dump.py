@@ -1,5 +1,6 @@
 """Network-free regression tests: python -m unittest discover -s tools -v."""
 import io
+import base64
 import json
 import shutil
 import subprocess
@@ -35,6 +36,10 @@ class FakeClient:
         self.url = "https://github.com/user-attachments/assets/image-id"
 
     def json(self, path):
+        if path.endswith("/readme"):
+            content = ("# Fixture README\n" + self.url + "\n").encode()
+            return {"path": "README.md", "sha": "fixture", "encoding": "base64", "size": len(content),
+                    "content": base64.b64encode(content).decode()}
         if path.endswith("/pulls/2"):
             return {"number": 2, "title": "Closed PR", "state": "closed", "body": "Pull text"}
         return {"private": False, "name": "fixture"}
@@ -134,6 +139,19 @@ class ExportTests(unittest.TestCase):
             self.assertEqual(len(manifest["errors"]), 2)
             self.assertIn("INCOMPLETE", (Path(directory) / "README.md").read_text())
 
+    def test_readme_only_attachment_and_missing_readme(self):
+        with tempfile.TemporaryDirectory() as directory:
+            client = FakeClient()
+            archive = Archive(client, "o/r", directory, 1000, 10000)
+            archive.save_readme("/repos/o/r")
+            self.assertEqual(client.downloads, 1)
+            self.assertEqual(archive.assets[client.url]["sources"], ["repository/README"])
+            self.assertIn("../assets/", (Path(directory)/"repository/README.md").read_text())
+            self.assertIn(client.url, (Path(directory)/"repository/README.original.md").read_text())
+            client.json = lambda path: (_ for _ in ()).throw(RuntimeError("GitHub HTTP 404"))
+            archive.save_readme("/repos/o/r")
+            self.assertIsNone(archive.manifest["readme"])
+
     def test_oversized_asset_is_failure_not_silent_truncation(self):
         with tempfile.TemporaryDirectory() as directory:
             archive = Archive(FakeClient(asset=b"123456"), "o/r", directory, 5, 100)
@@ -195,10 +213,12 @@ class ExportTests(unittest.TestCase):
             self.assertEqual(archive.run(), 0)
             original = b"source line\r\nsecond line\r\n"
             (root / "assets" / "source.txt").write_bytes(original)
+            (root / "repository" / "README.original.md").write_bytes(original)
             subprocess.run(["git", "init", "-q", directory], check=True, capture_output=True)
-            subprocess.run(["git", "-C", directory, "-c", "core.autocrlf=true", "add", ".gitattributes", "assets/source.txt"], check=True, capture_output=True)
-            stored = subprocess.run(["git", "-C", directory, "show", ":assets/source.txt"], check=True, capture_output=True).stdout
-            self.assertEqual(stored, original)
+            subprocess.run(["git", "-C", directory, "-c", "core.autocrlf=true", "add", ".gitattributes", "assets/source.txt", "repository/README.original.md"], check=True, capture_output=True)
+            for path in ("assets/source.txt", "repository/README.original.md"):
+                stored = subprocess.run(["git", "-C", directory, "show", ":" + path], check=True, capture_output=True).stdout
+                self.assertEqual(stored, original)
 
     def test_private_repository_is_rejected_before_archiving(self):
         with tempfile.TemporaryDirectory() as directory:
