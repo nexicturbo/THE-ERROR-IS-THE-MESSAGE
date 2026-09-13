@@ -162,6 +162,19 @@ class ExportTests(unittest.TestCase):
             with self.assertRaises(ValueError):
                 Archive(FakeClient(), "other/repository", directory, 1000, 10000)
 
+    def test_patch_fixture_urls_are_preserved_but_not_downloaded(self):
+        with tempfile.TemporaryDirectory() as directory:
+            client = FakeClient()
+            archive = Archive(client, "o/r", directory, 1000, 10000)
+            record = {"title": "Test code", "body": client.url, "comments": [], "reviews": [],
+                      "review_comments": [{"body": "Review text", "diff_hunk": client.url + "-fake"}],
+                      "changed_files": [{"patch": "+ " + client.url + "-fixture"}]}
+            archive.save_record("pulls", 2, record)
+            self.assertEqual(client.downloads, 1)
+            self.assertEqual(set(archive.assets), {client.url})
+            saved = json.loads((Path(directory) / "pulls/2.json").read_text())
+            self.assertIn("-fixture", saved["changed_files"][0]["patch"])
+
     def test_private_repository_is_rejected_before_archiving(self):
         with tempfile.TemporaryDirectory() as directory:
             client = FakeClient()

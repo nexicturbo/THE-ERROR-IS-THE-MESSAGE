@@ -289,7 +289,12 @@ class Archive:
         destination = self.output / folder / str(identifier)
         self.record_paths[folder].append(str(identifier))
         dump_json(destination.with_suffix(".json"), record)
-        for url in sorted(attachment_urls(record)):
+        # Scan conversation content, not changed-file patches or API metadata:
+        # code diffs often contain intentionally fictitious attachment URLs.
+        conversation = [record.get("body") or ""]
+        for field in ("comments", "reviews", "review_comments"):
+            conversation.extend(item.get("body") or "" for item in record.get(field, []))
+        for url in sorted(attachment_urls(conversation)):
             self.download(url, f"{folder}/{identifier}")
         lines = [f"# {record.get('title') or record.get('name') or record.get('tag_name') or identifier}",
                  "", record.get("html_url", ""), "", record.get("body") or ""]
