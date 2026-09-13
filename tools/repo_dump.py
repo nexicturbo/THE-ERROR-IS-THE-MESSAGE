@@ -21,6 +21,7 @@ import urllib.request
 API = "https://api.github.com"
 URL_RE = re.compile(r'https://[^\s<>"\x27]+')
 REPO_RE = re.compile(r"[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+\Z")
+CHUNK_BYTES = 48 * 1024 * 1024
 
 
 def now():
@@ -40,6 +41,55 @@ def sha256_file(path):
         for chunk in iter(lambda: stream.read(1024 * 1024), b""):
             digest.update(chunk)
     return digest.hexdigest()
+
+
+def verified_asset(root, entry):
+    """Verify small files or ordered chunks against the original whole-file digest."""
+    digest, size = hashlib.sha256(), 0
+    pieces = entry.get("parts") or [{"path": entry.get("path", "")}]
+    for piece in pieces:
+        path = (root / piece["path"]).resolve()
+        if not path.is_relative_to(root / "assets") or not path.is_file():
+            return False
+        part_digest = hashlib.sha256()
+        with path.open("rb") as stream:
+            for chunk in iter(lambda: stream.read(1024 * 1024), b""):
+                digest.update(chunk)
+                part_digest.update(chunk)
+                size += len(chunk)
+        if piece.get("sha256") and piece["sha256"] != part_digest.hexdigest():
+            return False
+    return digest.hexdigest() == entry.get("sha256") and size == entry.get("bytes")
+
+
+def chunk_asset(target, root, chunk_bytes=CHUNK_BYTES):
+    """Losslessly split oversized Git files; retain an independently checkable manifest."""
+    if target.stat().st_size <= chunk_bytes:
+        return {}
+    directory = target.with_name(target.name + ".parts")
+    directory.mkdir(exist_ok=True)
+    if not directory.resolve().is_relative_to(root / "assets"):
+        raise RuntimeError("Chunk directory points outside the archive")
+    parts = []
+    with target.open("rb") as source:
+        index = 0
+        while data := source.read(chunk_bytes):
+            index += 1
+            piece = directory / f"{index:05d}.part"
+            piece.write_bytes(data)
+            parts.append({"path": piece.relative_to(root).as_posix(), "bytes": len(data),
+                          "sha256": hashlib.sha256(data).hexdigest()})
+    # An interrupted or changed prior run must not leave stale tail chunks.
+    for old in directory.glob("*.part"):
+        if old.name not in {Path(piece["path"]).name for piece in parts}:
+            old.unlink()
+    readme = directory / "README.md"
+    readme.write_text("# Chunked attachment\n\nOriginal filename: `" + target.name + "`\n\n"
+                      "This file exceeds the archive chunk size. All bytes are preserved in ordered parts. "
+                      "Use `python tools/restore_archive.py PATH_TO_ARCHIVE OUTPUT_DIRECTORY` to reconstruct and verify it. "
+                      "The archive manifest records every part and the original SHA-256.\n", encoding="utf-8")
+    target.unlink()
+    return {"parts": parts, "path": readme.relative_to(root).as_posix(), "filename": target.name}
 
 
 def safe_download_url(url):
@@ -173,13 +223,15 @@ class Archive:
         partial = None
         try:
             prior = self.previous.get(url, {})
-            previous_path = (self.output / prior.get("path", "")).resolve()
-            if (prior.get("status") == "saved" and previous_path.is_relative_to(self.output / "assets")
-                    and previous_path.is_file() and sha256_file(previous_path) == prior.get("sha256")):
-                size = previous_path.stat().st_size
+            if prior.get("status") == "saved" and verified_asset(self.output, prior):
+                size = prior["bytes"]
                 if size > self.max_asset_bytes or self.total_bytes + size > self.max_total_bytes:
                     raise RuntimeError("Verified cached asset exceeds configured size budget")
                 entry.update({key: prior[key] for key in ("path", "sha256", "bytes", "content_type")})
+                if prior.get("parts"):
+                    entry.update(parts=prior["parts"], filename=prior["filename"])
+                elif size > CHUNK_BYTES:
+                    entry.update(chunk_asset(self.output / prior["path"], self.output))
                 entry["status"] = "saved"
                 entry["reused"] = True
                 self.total_bytes += size
@@ -206,6 +258,8 @@ class Archive:
                 if not target.parent.resolve().is_relative_to(self.output):
                     raise RuntimeError("Asset directory points outside the output directory")
                 partial = target.with_suffix(target.suffix + ".part")
+                if not target.resolve().is_relative_to(self.output) or not partial.resolve().is_relative_to(self.output):
+                    raise RuntimeError("Asset file points outside the output directory")
                 digest, size = hashlib.sha256(), 0
                 with partial.open("wb") as stream:
                     for chunk in iter(lambda: response.read(1024 * 1024), b""):
@@ -219,6 +273,7 @@ class Archive:
                 partial.replace(target)
                 entry.update(status="saved", path=target.relative_to(self.output).as_posix(),
                              sha256=digest.hexdigest(), bytes=size, content_type=content_type, reused=False)
+                entry.update(chunk_asset(target, self.output))
                 self.total_bytes += size
         except Exception as error:
             entry["error"] = str(error).split("https://", 1)[0][:200]
@@ -311,8 +366,8 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("repository", help="public owner/repository")
     parser.add_argument("--output", type=Path, default=Path("repository-archive"))
-    parser.add_argument("--max-asset-bytes", type=int, default=90 * 1024 * 1024)
-    parser.add_argument("--max-total-bytes", type=int, default=1024 * 1024 * 1024)
+    parser.add_argument("--max-asset-bytes", type=int, default=1024 * 1024 * 1024)
+    parser.add_argument("--max-total-bytes", type=int, default=4 * 1024 * 1024 * 1024)
     args = parser.parse_args()
     if not REPO_RE.fullmatch(args.repository) or ".." in args.repository:
         parser.error("Use owner/repository, not a URL or path")

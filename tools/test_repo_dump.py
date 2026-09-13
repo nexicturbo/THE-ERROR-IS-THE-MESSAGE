@@ -6,7 +6,8 @@ import tempfile
 import unittest
 from urllib.request import Request
 
-from repo_dump import API, Archive, Client, SafeRedirect, attachment_urls, is_attachment
+from repo_dump import API, Archive, Client, SafeRedirect, attachment_urls, chunk_asset, is_attachment, sha256_file, verified_asset
+from restore_archive import restore
 
 
 class Response(io.BytesIO):
@@ -169,6 +170,26 @@ class ExportTests(unittest.TestCase):
             self.assertEqual(archive.run(), 2)
             self.assertEqual(client.downloads, 0)
             self.assertFalse((Path(directory) / "metadata/repository.json").exists())
+
+    def test_large_file_chunks_reconstruct_exactly_and_corruption_is_detected(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory) / "archive"
+            (root / "assets").mkdir(parents=True)
+            target = root / "assets" / "video.mp4"
+            original = b"original video bytes" * 20
+            target.write_bytes(original)
+            entry = {"status": "saved", "bytes": len(original), "sha256": sha256_file(target)}
+            entry.update(chunk_asset(target, root, chunk_bytes=17))
+            self.assertFalse(target.exists())
+            self.assertTrue(verified_asset(root, entry))
+            (root / "manifest.json").write_text(json.dumps({"assets": {"url": entry}}))
+            output = Path(directory) / "restored"
+            self.assertEqual(restore(root, output), 0)
+            self.assertEqual((output / "video.mp4").read_bytes(), original)
+            (root / entry["parts"][0]["path"]).write_bytes(b"bad")
+            self.assertFalse(verified_asset(root, entry))
+            self.assertEqual(restore(root, output), 2)
+            self.assertFalse(list(output.glob("*.restoring")))
 
     def test_stream_without_content_length_still_enforces_budget(self):
         with tempfile.TemporaryDirectory() as directory:
