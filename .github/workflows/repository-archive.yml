@@ -1,0 +1,92 @@
+name: Repository archive
+
+on:
+  workflow_dispatch:
+    inputs:
+      source_repository:
+        description: 'Public owner/repository to archive (blank means this repository)'
+        required: false
+        default: ''
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: repository-archive
+  cancel-in-progress: false
+
+jobs:
+  archive:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    permissions:
+      contents: write
+    env:
+      ARCHIVE_BRANCH: repository-archive
+      OUTPUT: ${{ runner.temp }}/repository-dump-output
+      DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
+      RUN_BRANCH: ${{ github.ref_name }}
+      REPOSITORY: ${{ github.repository }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+      - name: Test exporter
+        run: python3 -m unittest discover -s tools -v
+      - name: Restore previous archive for verified asset reuse
+        run: |
+          mkdir -p "$OUTPUT"
+          if git ls-remote --exit-code --heads origin "$ARCHIVE_BRANCH" >/dev/null; then
+            git fetch --depth=1 origin "$ARCHIVE_BRANCH"
+            git archive FETCH_HEAD archive | tar -x -C "$OUTPUT" --strip-components=1
+          fi
+      - name: Export repository
+        id: export
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ github.token }}
+          SOURCE: ${{ inputs.source_repository || github.repository }}
+        run: |
+          # Switching the public source must not mix it with a previous source's cache.
+          if [ -f "$OUTPUT/manifest.json" ]; then
+            python3 -c 'import json,os,sys; d=json.load(open(os.path.join(os.environ["OUTPUT"],"manifest.json"))); sys.exit(0 if d["repository"] == os.environ["SOURCE"] else 1)' || {
+              echo 'This archive branch belongs to another source. Choose its original source, or use a separate fork.'
+              exit 2
+            }
+          fi
+          python3 tools/repo_dump.py "$SOURCE" --output "$OUTPUT"
+      - name: Save snapshot on the dedicated repository branch
+        if: steps.export.outcome == 'success' || steps.export.outcome == 'failure'
+        run: |
+          test -f "$OUTPUT/manifest.json"
+          # Never overwrite the default branch or the branch containing the tool.
+          if [ "$ARCHIVE_BRANCH" = "$DEFAULT_BRANCH" ] || [ "$ARCHIVE_BRANCH" = "$RUN_BRANCH" ]; then
+            echo 'Refusing to replace a source branch.'
+            exit 1
+          fi
+          cp tools/restore_archive.py "$RUNNER_TEMP/restore_archive.py"
+          if git ls-remote --exit-code --heads origin "$ARCHIVE_BRANCH" >/dev/null; then
+            git fetch --depth=1 origin "$ARCHIVE_BRANCH"
+            git checkout -B "$ARCHIVE_BRANCH" FETCH_HEAD
+          else
+            git checkout --orphan "$ARCHIVE_BRANCH"
+            git rm -rf --ignore-unmatch .
+          fi
+          mkdir -p archive tools
+          cp "$RUNNER_TEMP/restore_archive.py" tools/restore_archive.py
+          rsync -a --delete "$OUTPUT/" archive/
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -- archive tools/restore_archive.py
+          if ! git diff --cached --quiet; then
+            git commit -m 'Archive repository conversations, releases and uploaded media'
+            git push origin "HEAD:refs/heads/$ARCHIVE_BRANCH"
+          fi
+          echo "Archive: https://github.com/$REPOSITORY/tree/$ARCHIVE_BRANCH/archive" >> "$GITHUB_STEP_SUMMARY"
+      - name: Fail visibly if any source data or attachment was unavailable
+        if: steps.export.outcome == 'failure'
+        run: |
+          echo 'INCOMPLETE export. The preserved manifest lists errors; rerun after resolving them.' >> "$GITHUB_STEP_SUMMARY"
+          exit 1
+
