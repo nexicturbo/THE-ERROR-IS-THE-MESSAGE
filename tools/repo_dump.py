@@ -276,11 +276,14 @@ class Archive:
                 entry.update(chunk_asset(target, self.output))
                 self.total_bytes += size
         except Exception as error:
+            entry["status"] = "failed"
             entry["error"] = str(error).split("https://", 1)[0][:200]
             self.errors.append({"source": source, "asset": url, "error": entry["error"]})
         finally:
             if partial and partial.exists():
                 partial.unlink()
+            # Preserve verified asset progress even if a long run is interrupted.
+            dump_json(self.output / "manifest.json", self.manifest)
 
     def save_record(self, folder, identifier, record):
         destination = self.output / folder / str(identifier)
