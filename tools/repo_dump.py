@@ -165,7 +165,9 @@ class Client:
     def open(self, url, binary=False):
         if not safe_download_url(url):
             raise RuntimeError("Refusing a non-GitHub HTTPS URL")
-        headers = {"User-Agent": "repository-dump/1.0", "Accept": "application/octet-stream" if binary else "application/vnd.github+json"}
+        archive_endpoint = bool(re.search(r"/repos/[^/]+/[^/]+/(?:zipball|tarball)/", urllib.parse.urlsplit(url).path))
+        headers = {"User-Agent": "repository-dump/1.0",
+                   "Accept": "application/octet-stream" if binary and not archive_endpoint else "application/vnd.github+json"}
         if urllib.parse.urlsplit(url).hostname == "api.github.com":
             headers["X-GitHub-Api-Version"] = "2022-11-28"
             if self.token:

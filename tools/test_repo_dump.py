@@ -95,9 +95,12 @@ class ExportTests(unittest.TestCase):
 
     def test_token_only_sent_to_api_and_removed_from_redirect(self):
         asset = "https://github.com/user-attachments/assets/a"
-        opener = Open({asset: (b"x", {})})
+        archive_url = API + "/repos/o/r/zipball/abc"
+        opener = Open({asset: (b"x", {}), archive_url: (b"PK", {})})
         Client("secret", opener).open(asset, binary=True)
         self.assertIsNone(opener.requests[0].get_header("Authorization"))
+        Client("secret", opener).open(archive_url, binary=True)
+        self.assertEqual(opener.requests[1].get_header("Accept"), "application/vnd.github+json")
         request = Request(API + "/repos/o/r/releases/assets/1", headers={"Authorization": "Bearer secret"})
         redirect = SafeRedirect().redirect_request(request, None, 302, "Found", {}, "https://release-assets.githubusercontent.com/x")
         self.assertIsNone(redirect.get_header("Authorization"))
