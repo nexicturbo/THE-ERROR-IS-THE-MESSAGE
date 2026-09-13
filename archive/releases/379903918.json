@@ -38,5 +38,19 @@
   "assets": [],
   "tarball_url": "https://api.github.com/repos/attogram/THE-ERROR-IS-THE-MESSAGE/tarball/0002",
   "zipball_url": "https://api.github.com/repos/attogram/THE-ERROR-IS-THE-MESSAGE/zipball/0002",
-  "body": "**Full Changelog**: https://github.com/attogram/THE-ERROR-IS-THE-MESSAGE/compare/0001...0002\r\n\r\n\r\nhttps://github.com/user-attachments/assets/5dfcbea8-a6ad-4cfc-aaa1-c2fdbaf9963b\r\n\r\n\r\nhttps://github.com/user-attachments/assets/1aa3f0f3-4127-43c5-b696-72da303ef32b\r\n\r\n\r\nhttps://github.com/user-attachments/assets/a661a814-5e15-475d-b9fa-37f16a52adae\r\n\r\n\r\nhttps://github.com/user-attachments/assets/66bf53b2-9d96-4dbc-a9ec-80d2f941797a\r\n\r\n\r\nhttps://github.com/user-attachments/assets/02a0b2d5-15a2-4800-8ab5-b3c7d2d3afdf\r\n\r\n\r\nhttps://github.com/user-attachments/assets/ab30b471-16e0-41e2-9a43-eaec08050338\r\n\r\n<img width=\"1168\" height=\"784\" alt=\"grok_1787391224921\" src=\"https://github.com/user-attachments/assets/d82170ba-5714-45f9-9750-2124ddc4a087\" />\r\n"
+  "body": "**Full Changelog**: https://github.com/attogram/THE-ERROR-IS-THE-MESSAGE/compare/0001...0002\r\n\r\n\r\nhttps://github.com/user-attachments/assets/5dfcbea8-a6ad-4cfc-aaa1-c2fdbaf9963b\r\n\r\n\r\nhttps://github.com/user-attachments/assets/1aa3f0f3-4127-43c5-b696-72da303ef32b\r\n\r\n\r\nhttps://github.com/user-attachments/assets/a661a814-5e15-475d-b9fa-37f16a52adae\r\n\r\n\r\nhttps://github.com/user-attachments/assets/66bf53b2-9d96-4dbc-a9ec-80d2f941797a\r\n\r\n\r\nhttps://github.com/user-attachments/assets/02a0b2d5-15a2-4800-8ab5-b3c7d2d3afdf\r\n\r\n\r\nhttps://github.com/user-attachments/assets/ab30b471-16e0-41e2-9a43-eaec08050338\r\n\r\n<img width=\"1168\" height=\"784\" alt=\"grok_1787391224921\" src=\"https://github.com/user-attachments/assets/d82170ba-5714-45f9-9750-2124ddc4a087\" />\r\n",
+  "source_archives": [
+    {
+      "format": "zipball",
+      "url": "https://api.github.com/repos/attogram/THE-ERROR-IS-THE-MESSAGE/zipball/0002",
+      "commit": "d6a2113f8ca46620cbc5114b16bd716c2a805182",
+      "download_url": "https://api.github.com/repos/attogram/THE-ERROR-IS-THE-MESSAGE/zipball/d6a2113f8ca46620cbc5114b16bd716c2a805182"
+    },
+    {
+      "format": "tarball",
+      "url": "https://api.github.com/repos/attogram/THE-ERROR-IS-THE-MESSAGE/tarball/0002",
+      "commit": "d6a2113f8ca46620cbc5114b16bd716c2a805182",
+      "download_url": "https://api.github.com/repos/attogram/THE-ERROR-IS-THE-MESSAGE/tarball/d6a2113f8ca46620cbc5114b16bd716c2a805182"
+    }
+  ]
 }
