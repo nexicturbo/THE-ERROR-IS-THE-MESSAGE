@@ -19,7 +19,7 @@ import urllib.parse
 import urllib.request
 
 API = "https://api.github.com"
-URL_RE = re.compile(r'https://[^\s<>"\x27]+')
+URL_RE = re.compile(r'https://[^\s<>"\x27`]+')
 REPO_RE = re.compile(r"[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+\Z")
 CHUNK_BYTES = 48 * 1024 * 1024
 
@@ -138,6 +138,13 @@ def attachment_urls(value):
     return found
 
 
+def is_placeholder_url(url):
+    """Recognize only explicit all-x placeholders; ordinary broken URLs still fail."""
+    parsed = urllib.parse.urlsplit(url)
+    return parsed.hostname == "github.com" and bool(re.fullmatch(
+        r"/user-attachments/assets/[xX]{3,}", parsed.path))
+
+
 class SafeRedirect(urllib.request.HTTPRedirectHandler):
     def redirect_request(self, req, fp, code, msg, headers, newurl):
         if not safe_download_url(newurl):
@@ -211,7 +218,8 @@ class Archive:
                 raise ValueError("Output directory belongs to a different repository")
             self.previous = previous_manifest.get("assets", {})
         self.manifest = {"schema_version": 1, "repository": repository, "started_at": now(),
-                         "complete": False, "counts": {}, "assets": self.assets, "errors": self.errors}
+                         "complete": False, "counts": {}, "assets": self.assets, "errors": self.errors,
+                         "ignored_urls": []}
 
     def download(self, url, source, api_url=None):
         if url in self.assets:
@@ -295,7 +303,11 @@ class Archive:
         for field in ("comments", "reviews", "review_comments"):
             conversation.extend(item.get("body") or "" for item in record.get(field, []))
         for url in sorted(attachment_urls(conversation)):
-            self.download(url, f"{folder}/{identifier}")
+            if is_placeholder_url(url):
+                self.manifest["ignored_urls"].append({"url": url, "source": f"{folder}/{identifier}",
+                    "reason": "Explicit all-x example placeholder; original text retained"})
+            else:
+                self.download(url, f"{folder}/{identifier}")
         lines = [f"# {record.get('title') or record.get('name') or record.get('tag_name') or identifier}",
                  "", record.get("html_url", ""), "", record.get("body") or ""]
         for field in ("comments", "reviews", "review_comments"):

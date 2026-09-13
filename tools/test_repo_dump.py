@@ -177,6 +177,16 @@ class ExportTests(unittest.TestCase):
             saved = json.loads((Path(directory) / "pulls/2.json").read_text())
             self.assertIn("-fixture", saved["changed_files"][0]["patch"])
 
+    def test_inline_links_work_and_explicit_placeholder_is_recorded(self):
+        with tempfile.TemporaryDirectory() as directory:
+            client = FakeClient()
+            archive = Archive(client, "o/r", directory, 1000, 10000)
+            placeholder = "https://github.com/user-attachments/assets/xxxx"
+            archive.save_record("issues", 1, {"body": f"Real `{client.url}`; example `{placeholder}`"})
+            self.assertEqual(set(archive.assets), {client.url})
+            self.assertEqual(archive.manifest["ignored_urls"][0]["url"], placeholder)
+            self.assertIn(placeholder, (Path(directory) / "issues/1.json").read_text())
+
     @unittest.skipUnless(shutil.which("git"), "Git required for byte-preservation round trip")
     def test_git_does_not_normalize_archived_text_attachment_bytes(self):
         with tempfile.TemporaryDirectory() as directory:

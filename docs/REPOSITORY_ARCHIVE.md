@@ -23,6 +23,8 @@ Repository settings or organization policy must permit Actions to write reposito
 
 Repeated attachment URLs are downloaded once. Every paginated API collection follows GitHub's next-page links, including comments, reviews and release assets. PRs returned by the issues endpoint are separated to avoid double-counting them as issues.
 
+Attachment discovery scans conversation bodies, including inline links, rather than code patches containing test fixtures. An explicit all-x example such as `https://github.com/user-attachments/assets/xxxx` is retained in the source text and listed in `manifest.ignored_urls`; it is not an uploaded file. Other missing attachment URLs remain errors.
+
 The generated `.gitattributes` disables line-ending conversion for archived assets, including text/code attachments, so Git checkout settings do not silently change their bytes.
 
 ## Local command
