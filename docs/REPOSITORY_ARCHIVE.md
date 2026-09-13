@@ -2,7 +2,7 @@
 
 The **Repository archive** Actions workflow exports public repository issues, pull requests, release notes, uploaded media and release assets into the **`repository-archive` branch in the same repository**. The main/source branch stays intact. No server, subscription or local installation is needed when using Actions.
 
-**One-time owner installation:** this contribution includes the workflow as [repository-archive.workflow.yml](repository-archive.workflow.yml). Copy its contents to `.github/workflows/repository-archive.yml` on the default branch. The contributor's current GitHub credential cannot register Actions workflows, so the executable and local tests can be demonstrated directly, but the Actions run requires this owner installation. The template does not run automatically merely by merging this contribution.
+The manual workflow is included at [`.github/workflows/repository-archive.yml`](../.github/workflows/repository-archive.yml). It becomes available when this contribution is on the repository's default branch. It runs only when a repository owner or authorized collaborator chooses **Run workflow**; merging does not start an archive automatically.
 
 1. Open this repository on GitHub in your phone's browser. If testing a fork, open that fork.
 2. Open **Actions → Repository archive → Run workflow**. The workflow must already exist on the repository's default branch. GitHub may first ask the repository owner to enable Actions on a fork.
