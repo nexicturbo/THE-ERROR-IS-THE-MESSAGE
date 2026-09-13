@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "repository": "attogram/THE-ERROR-IS-THE-MESSAGE",
-  "started_at": "2026-09-13T10:16:18.868476+00:00",
+  "started_at": "2026-09-13T10:31:16.990195+00:00",
   "complete": true,
   "counts": {
     "issues": 60,
@@ -3485,6 +3485,18 @@
       "content_type": "video/mp4",
       "reused": true
     },
+    "https://github.com/user-attachments/assets/10aa0e6a-7e0d-450d-899e-f5a545dc1b2b": {
+      "sources": [
+        "issues/60"
+      ],
+      "status": "saved",
+      "revision": null,
+      "path": "assets/5d62c9656780a32697ab-10aa0e6a-7e0d-450d-899e-f5a545dc1b2b.jpg",
+      "sha256": "4a100d67e7d6a99637d49499f786895278d5a217db5a35daf4c92d37d92d22c7",
+      "bytes": 53606,
+      "content_type": "image/jpeg",
+      "reused": false
+    },
     "https://github.com/user-attachments/assets/1a9d09ba-f30c-445e-adfd-7be4210cb648": {
       "sources": [
         "issues/60"
@@ -3641,6 +3653,18 @@
       "content_type": "image/gif",
       "reused": true
     },
+    "https://github.com/user-attachments/assets/610173b1-3c04-4e99-bb87-bb19c82cdc8b": {
+      "sources": [
+        "issues/60"
+      ],
+      "status": "saved",
+      "revision": null,
+      "path": "assets/9d14dfe70250d88b0be0-610173b1-3c04-4e99-bb87-bb19c82cdc8b.jpg",
+      "sha256": "a367f583aa4a1b0933fb7c4044e3abd4593d4c6cb5ea68ad762245feb2b57abf",
+      "bytes": 345206,
+      "content_type": "image/jpeg",
+      "reused": false
+    },
     "https://github.com/user-attachments/assets/656d36a8-eb15-42a9-a270-c0ca7574b2d1": {
       "sources": [
         "issues/60"
@@ -3664,6 +3688,18 @@
       "bytes": 640561,
       "content_type": "image/jpeg",
       "reused": true
+    },
+    "https://github.com/user-attachments/assets/6804e20e-ed3b-42eb-a23a-45b20b8779f9": {
+      "sources": [
+        "issues/60"
+      ],
+      "status": "saved",
+      "revision": null,
+      "path": "assets/62f3eff4e705662f88cb-6804e20e-ed3b-42eb-a23a-45b20b8779f9.mp4",
+      "sha256": "71f7f50a8551afdd188060498cde1c65e0e34f7e502362005e5b5573efb4d463",
+      "bytes": 9716974,
+      "content_type": "video/mp4",
+      "reused": false
     },
     "https://github.com/user-attachments/assets/6c40ac3d-bab4-4fd2-871a-204c299d0a68": {
       "sources": [
@@ -3833,6 +3869,18 @@
       "content_type": "video/mp4",
       "reused": true
     },
+    "https://github.com/user-attachments/assets/b1e6c07e-811a-4cc6-a531-5679fdd676a2": {
+      "sources": [
+        "issues/60"
+      ],
+      "status": "saved",
+      "revision": null,
+      "path": "assets/5fa0eebe7ba52057b6bf-b1e6c07e-811a-4cc6-a531-5679fdd676a2.jpg",
+      "sha256": "2e970194c41a657660bc41b0260b75aaeb4847a8825834df19ed402d13f528eb",
+      "bytes": 1114678,
+      "content_type": "image/jpeg",
+      "reused": false
+    },
     "https://github.com/user-attachments/assets/b2e20fe0-1c1f-4cd1-8820-03c14fdc7e8b": {
       "sources": [
         "issues/60"
@@ -3844,6 +3892,18 @@
       "bytes": 8185641,
       "content_type": "video/mp4",
       "reused": true
+    },
+    "https://github.com/user-attachments/assets/b53a88dd-46d8-412b-bdb0-85a69ce7207e": {
+      "sources": [
+        "issues/60"
+      ],
+      "status": "saved",
+      "revision": null,
+      "path": "assets/8bf52b7ab2b0b1f6a065-b53a88dd-46d8-412b-bdb0-85a69ce7207e.jpg",
+      "sha256": "80b4371cd7dba89618c3372f8e4a11c7a0608418c7225e8c5aad1eca767699c6",
+      "bytes": 140082,
+      "content_type": "image/jpeg",
+      "reused": false
     },
     "https://github.com/user-attachments/assets/b825dffc-91fe-49c2-8a02-f81cadbe135f": {
       "sources": [
@@ -3941,6 +4001,18 @@
       "content_type": "video/mp4",
       "reused": true
     },
+    "https://github.com/user-attachments/assets/d4b0a207-67a4-4f62-a28b-52600fde3039": {
+      "sources": [
+        "issues/60"
+      ],
+      "status": "saved",
+      "revision": null,
+      "path": "assets/0934b699d5745aa12e35-d4b0a207-67a4-4f62-a28b-52600fde3039.jpg",
+      "sha256": "a367f583aa4a1b0933fb7c4044e3abd4593d4c6cb5ea68ad762245feb2b57abf",
+      "bytes": 345206,
+      "content_type": "image/jpeg",
+      "reused": false
+    },
     "https://github.com/user-attachments/assets/d8fad760-06fa-4f3e-a6a8-40eb580aeb0e": {
       "sources": [
         "issues/60"
@@ -3952,6 +4024,18 @@
       "bytes": 1587156,
       "content_type": "image/jpeg",
       "reused": true
+    },
+    "https://github.com/user-attachments/assets/dc4ae476-a959-4574-81af-f437015bd8ad": {
+      "sources": [
+        "issues/60"
+      ],
+      "status": "saved",
+      "revision": null,
+      "path": "assets/c7267f38b5033d3e25c7-dc4ae476-a959-4574-81af-f437015bd8ad.jpg",
+      "sha256": "4983e6855f3c9f533dee389deec1c82b8de9a9990df9fd484c95fdbc2aaeedab",
+      "bytes": 3059713,
+      "content_type": "image/jpeg",
+      "reused": false
     },
     "https://github.com/user-attachments/assets/dfd1e8da-14c1-448b-ab78-48b019755cc4": {
       "sources": [
@@ -4000,6 +4084,18 @@
       "bytes": 2440403,
       "content_type": "image/jpeg",
       "reused": true
+    },
+    "https://github.com/user-attachments/assets/e288639e-4de3-4672-a6e2-d70670d32022": {
+      "sources": [
+        "issues/60"
+      ],
+      "status": "saved",
+      "revision": null,
+      "path": "assets/916123791eea6e7e4420-e288639e-4de3-4672-a6e2-d70670d32022.jpg",
+      "sha256": "21c167eed467b84cf5780dc3c213e700aa2e734a8d87f73d8c105c4f838730ef",
+      "bytes": 299474,
+      "content_type": "image/jpeg",
+      "reused": false
     },
     "https://github.com/user-attachments/assets/e9cfdee9-c144-4ca1-8b72-388165b23fbe": {
       "sources": [
@@ -4095,7 +4191,7 @@
       "sha256": "fee53f9ca1ad65e52d63ff9cda9e1b6aaa8e1a36ac6974f24eda71b89f09b7c7",
       "bytes": 39396262,
       "content_type": "application/zip",
-      "reused": false
+      "reused": true
     },
     "https://api.github.com/repos/attogram/THE-ERROR-IS-THE-MESSAGE/tarball/0003": {
       "sources": [
@@ -4107,7 +4203,7 @@
       "sha256": "ed5d184cb7231305582147d4c8ae784b766ab262e90a37cb0ba20a96c1a3a725",
       "bytes": 39372573,
       "content_type": "application/x-gzip",
-      "reused": false
+      "reused": true
     },
     "https://github.com/user-attachments/assets/23f4b488-bc46-4fd9-8c02-302b91df4c01": {
       "sources": [
@@ -4251,7 +4347,7 @@
       "sha256": "e3dac87584453505b4b3b5e39c8c146280187461c6d44846a974db22312cccb6",
       "bytes": 15659,
       "content_type": "application/zip",
-      "reused": false
+      "reused": true
     },
     "https://api.github.com/repos/attogram/THE-ERROR-IS-THE-MESSAGE/tarball/0002": {
       "sources": [
@@ -4263,7 +4359,7 @@
       "sha256": "2f062254b585cc25fe7a0d9dd3a5e6d5ffeb1b78af1be49efb26a7481f2f2cf0",
       "bytes": 15084,
       "content_type": "application/x-gzip",
-      "reused": false
+      "reused": true
     },
     "https://github.com/user-attachments/assets/02a0b2d5-15a2-4800-8ab5-b3c7d2d3afdf": {
       "sources": [
@@ -4359,7 +4455,7 @@
       "sha256": "ed16135af105e14f705183769d7a98c4935657f129aec7bac18664e3b4916e49",
       "bytes": 15393,
       "content_type": "application/zip",
-      "reused": false
+      "reused": true
     },
     "https://api.github.com/repos/attogram/THE-ERROR-IS-THE-MESSAGE/tarball/0001": {
       "sources": [
@@ -4371,7 +4467,7 @@
       "sha256": "b2b87910329b323ab92e2417bc583b98238ea5c0840cc3212e7433bb55f7a7e9",
       "bytes": 14952,
       "content_type": "application/x-gzip",
-      "reused": false
+      "reused": true
     },
     "https://github.com/user-attachments/assets/1d9e36e3-ae17-448c-ab0b-d5ce0baeede7": {
       "sources": [
@@ -4839,7 +4935,7 @@
       "sha256": "6c6a7ba809e3fe467f0e83071e30637f5d20e407907c3ae2f09c9d28a7692d4a",
       "bytes": 15138,
       "content_type": "application/zip",
-      "reused": false
+      "reused": true
     },
     "https://api.github.com/repos/attogram/THE-ERROR-IS-THE-MESSAGE/tarball/0000": {
       "sources": [
@@ -4851,7 +4947,7 @@
       "sha256": "026a790a7ce4e4f1a7e760379cbbe7d9b8f0f6001a105f2cfdfead91eb223972",
       "bytes": 14684,
       "content_type": "application/x-gzip",
-      "reused": false
+      "reused": true
     },
     "https://github.com/user-attachments/assets/2b63e6fb-72a3-4a05-92b8-e2c046615a74": {
       "sources": [
@@ -4941,9 +5037,9 @@
     "original": "repository/README.original.md",
     "metadata": "repository/README.json"
   },
-  "finished_at": "2026-09-13T10:28:37.035760+00:00",
-  "asset_bytes": 1959761565,
-  "asset_count": 407,
+  "finished_at": "2026-09-13T10:32:38.055602+00:00",
+  "asset_bytes": 1974836504,
+  "asset_count": 415,
   "records": {
     "issues": [
       "1",

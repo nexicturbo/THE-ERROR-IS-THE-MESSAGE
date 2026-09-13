@@ -293,7 +293,7 @@
       "has_wiki": true,
       "has_pages": false,
       "has_discussions": false,
-      "forks_count": 11,
+      "forks_count": 12,
       "mirror_url": null,
       "archived": false,
       "disabled": false,
@@ -312,7 +312,7 @@
       "pull_request_creation_policy": "all",
       "topics": [],
       "visibility": "public",
-      "forks": 11,
+      "forks": 12,
       "open_issues": 70,
       "watchers": 0,
       "default_branch": "main"
