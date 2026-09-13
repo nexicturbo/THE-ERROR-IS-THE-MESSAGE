@@ -23,6 +23,8 @@ Repository settings or organization policy must permit Actions to write reposito
 
 Repeated attachment URLs are downloaded once. Every paginated API collection follows GitHub's next-page links, including comments, reviews and release assets. PRs returned by the issues endpoint are separated to avoid double-counting them as issues.
 
+The generated `.gitattributes` disables line-ending conversion for archived assets, including text/code attachments, so Git checkout settings do not silently change their bytes.
+
 ## Local command
 
 Python 3.10+ and an internet connection are sufficient. An authenticated GitHub CLI session or `GH_TOKEN`/`GITHUB_TOKEN` environment variable avoids the low anonymous API rate limit. Tokens are never written to the output or sent to attachment/CDN hosts; authorization is restricted to `api.github.com` and removed on CDN redirects.

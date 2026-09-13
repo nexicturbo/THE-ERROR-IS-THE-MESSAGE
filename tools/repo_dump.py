@@ -368,6 +368,7 @@ class Archive:
                 lines.append(f"- [{heading} {identifier}]({folder}/{identifier}.md) · [raw JSON]({folder}/{identifier}.json)")
             lines.append("")
         (self.output / "README.md").write_text("\n".join(lines), encoding="utf-8")
+        (self.output / ".gitattributes").write_text("/assets/** -text\n", encoding="utf-8")
 
 
 def main():

@@ -1,6 +1,8 @@
 """Network-free regression tests: python -m unittest discover -s tools -v."""
 import io
 import json
+import shutil
+import subprocess
 from pathlib import Path
 import tempfile
 import unittest
@@ -174,6 +176,19 @@ class ExportTests(unittest.TestCase):
             self.assertEqual(set(archive.assets), {client.url})
             saved = json.loads((Path(directory) / "pulls/2.json").read_text())
             self.assertIn("-fixture", saved["changed_files"][0]["patch"])
+
+    @unittest.skipUnless(shutil.which("git"), "Git required for byte-preservation round trip")
+    def test_git_does_not_normalize_archived_text_attachment_bytes(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            archive = Archive(FakeClient(), "o/r", root, 1000, 10000)
+            self.assertEqual(archive.run(), 0)
+            original = b"source line\r\nsecond line\r\n"
+            (root / "assets" / "source.txt").write_bytes(original)
+            subprocess.run(["git", "init", "-q", directory], check=True, capture_output=True)
+            subprocess.run(["git", "-C", directory, "-c", "core.autocrlf=true", "add", ".gitattributes", "assets/source.txt"], check=True, capture_output=True)
+            stored = subprocess.run(["git", "-C", directory, "show", ":assets/source.txt"], check=True, capture_output=True).stdout
+            self.assertEqual(stored, original)
 
     def test_private_repository_is_rejected_before_archiving(self):
         with tempfile.TemporaryDirectory() as directory:
