@@ -19,7 +19,7 @@ concurrency:
 jobs:
   archive:
     runs-on: ubuntu-latest
-    timeout-minutes: 25
+    timeout-minutes: 45
     permissions:
       contents: write
     env:
@@ -65,6 +65,7 @@ jobs:
             echo 'Refusing to replace a source branch.'
             exit 1
           fi
+          cp tools/restore_archive.py "$RUNNER_TEMP/restore_archive.py"
           if git ls-remote --exit-code --heads origin "$ARCHIVE_BRANCH" >/dev/null; then
             git fetch --depth=1 origin "$ARCHIVE_BRANCH"
             git checkout -B "$ARCHIVE_BRANCH" FETCH_HEAD
@@ -72,11 +73,12 @@ jobs:
             git checkout --orphan "$ARCHIVE_BRANCH"
             git rm -rf --ignore-unmatch .
           fi
-          mkdir -p archive
+          mkdir -p archive tools
+          cp "$RUNNER_TEMP/restore_archive.py" tools/restore_archive.py
           rsync -a --delete "$OUTPUT/" archive/
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add -- archive
+          git add -- archive tools/restore_archive.py
           if ! git diff --cached --quiet; then
             git commit -m 'Archive repository conversations, releases and uploaded media'
             git push origin "HEAD:refs/heads/$ARCHIVE_BRANCH"
