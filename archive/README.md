@@ -2,8 +2,8 @@
 
 Status: **Complete for the documented API scope**
 
-Started: 2026-09-13T10:31:16.990195+00:00  
-Finished: 2026-09-13T10:32:38.055602+00:00
+Started: 2026-09-13T11:51:31.250611+00:00  
+Finished: 2026-09-13T11:52:22.497795+00:00
 
 This is a sequential API snapshot, not an atomic point-in-time backup. Deleted/private data and GitHub Discussions are outside the scope.
 
@@ -84,6 +84,8 @@ This is a sequential API snapshot, not an atomic point-in-time backup. Deleted/p
 - [Pull requests 68](pulls/68.md) · [raw JSON](pulls/68.json)
 - [Pull requests 69](pulls/69.md) · [raw JSON](pulls/69.json)
 - [Pull requests 70](pulls/70.md) · [raw JSON](pulls/70.json)
+- [Pull requests 71](pulls/71.md) · [raw JSON](pulls/71.json)
+- [Pull requests 72](pulls/72.md) · [raw JSON](pulls/72.json)
 
 ## Releases
 
