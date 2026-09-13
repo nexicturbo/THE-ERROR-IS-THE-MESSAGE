@@ -2,8 +2,8 @@
 
 Status: **Complete for the documented API scope**
 
-Started: 2026-09-13T09:49:21.323140+00:00  
-Finished: 2026-09-13T09:50:20.241846+00:00
+Started: 2026-09-13T10:08:15.701387+00:00  
+Finished: 2026-09-13T10:09:59.179161+00:00
 
 This is a sequential API snapshot, not an atomic point-in-time backup. Deleted/private data and GitHub Discussions are outside the scope.
 
@@ -80,6 +80,9 @@ This is a sequential API snapshot, not an atomic point-in-time backup. Deleted/p
 - [Pull requests 64](pulls/64.md) · [raw JSON](pulls/64.json)
 - [Pull requests 65](pulls/65.md) · [raw JSON](pulls/65.json)
 - [Pull requests 66](pulls/66.md) · [raw JSON](pulls/66.json)
+- [Pull requests 67](pulls/67.md) · [raw JSON](pulls/67.json)
+- [Pull requests 68](pulls/68.md) · [raw JSON](pulls/68.json)
+- [Pull requests 69](pulls/69.md) · [raw JSON](pulls/69.json)
 
 ## Releases
 
@@ -87,3 +90,7 @@ This is a sequential API snapshot, not an atomic point-in-time backup. Deleted/p
 - [Releases 379899566](releases/379899566.md) · [raw JSON](releases/379899566.json)
 - [Releases 379903918](releases/379903918.md) · [raw JSON](releases/379903918.json)
 - [Releases 387057376](releases/387057376.md) · [raw JSON](releases/387057376.json)
+
+## Repository README
+
+[Readable copy with local media](repository/README.md) · [Original source](repository/README.original.md) · [API metadata](repository/README.json)

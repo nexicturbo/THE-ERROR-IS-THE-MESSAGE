@@ -1,11 +1,11 @@
 {
   "schema_version": 1,
   "repository": "attogram/THE-ERROR-IS-THE-MESSAGE",
-  "started_at": "2026-09-13T09:49:21.323140+00:00",
+  "started_at": "2026-09-13T10:08:15.701387+00:00",
   "complete": true,
   "counts": {
     "issues": 60,
-    "pull_requests": 6,
+    "pull_requests": 9,
     "releases": 4,
     "tags": 4
   },
@@ -1645,7 +1645,7 @@
       "sha256": "f3e336a080d0d6891dbef60b01f08ab436e2625f6050fede33b3617d01c5570e",
       "bytes": 135288,
       "content_type": "image/jpeg",
-      "reused": false
+      "reused": true
     },
     "https://github.com/user-attachments/assets/2da18213-77a4-4b7e-9160-d1a1003c8e38": {
       "sources": [
@@ -4363,6 +4363,72 @@
       "bytes": 154917,
       "content_type": "application/pdf",
       "reused": true
+    },
+    "https://github.com/user-attachments/assets/2b63e6fb-72a3-4a05-92b8-e2c046615a74": {
+      "sources": [
+        "repository/README"
+      ],
+      "status": "saved",
+      "path": "assets/cb2fcfac8cbde517cb6e-2b63e6fb-72a3-4a05-92b8-e2c046615a74.mp4",
+      "sha256": "e78a9fd24c02b8eee4d72376d6ef01f2e03c415daf1d2ddd5f639267ea7864e0",
+      "bytes": 5603474,
+      "content_type": "video/mp4",
+      "reused": false
+    },
+    "https://github.com/user-attachments/assets/71c71bea-28c7-4e35-9d7a-334f9eab0d82": {
+      "sources": [
+        "repository/README"
+      ],
+      "status": "saved",
+      "path": "assets/a58794b0e041046f5ded-71c71bea-28c7-4e35-9d7a-334f9eab0d82.mp4",
+      "sha256": "559a3c389bbb9dc558fe23dcb0bbefecbfb1b5405cac6f5464b447059e463fcc",
+      "bytes": 3421139,
+      "content_type": "video/mp4",
+      "reused": false
+    },
+    "https://github.com/user-attachments/assets/7d6e743f-f22d-4b66-a3ad-ad980d010ed3": {
+      "sources": [
+        "repository/README"
+      ],
+      "status": "saved",
+      "path": "assets/758a281df03e2a7638ea-7d6e743f-f22d-4b66-a3ad-ad980d010ed3.mp4",
+      "sha256": "7e3b109d9b95034e68b2a6f655eb795b07d33d67f098c5b6c2e9dc88cc2be13f",
+      "bytes": 48665407,
+      "content_type": "video/mp4",
+      "reused": false
+    },
+    "https://github.com/user-attachments/assets/894381f7-509d-4e77-bbf3-e9553edcba7e": {
+      "sources": [
+        "repository/README"
+      ],
+      "status": "saved",
+      "path": "assets/bdf5a2992bab455a86fa-894381f7-509d-4e77-bbf3-e9553edcba7e.mp4",
+      "sha256": "bcf9b7e62091bc12075f31f69281c5233c2c0bf08694399ee07811f2c8b4cc53",
+      "bytes": 3012755,
+      "content_type": "video/mp4",
+      "reused": false
+    },
+    "https://github.com/user-attachments/assets/9371543a-bc78-48e0-b93f-551494026578": {
+      "sources": [
+        "repository/README"
+      ],
+      "status": "saved",
+      "path": "assets/fe649618ef216c04f029-9371543a-bc78-48e0-b93f-551494026578.mp4",
+      "sha256": "0767c2011d2ddb1ccc52fbd8173129c9ae8e7f77fd97d7a7e309bf6f209bb88b",
+      "bytes": 92358,
+      "content_type": "video/mp4",
+      "reused": false
+    },
+    "https://github.com/user-attachments/assets/b4c337a0-62e9-4856-a420-8cd5bc895000": {
+      "sources": [
+        "repository/README"
+      ],
+      "status": "saved",
+      "path": "assets/a2b9a376c873f935a284-b4c337a0-62e9-4856-a420-8cd5bc895000.mp4",
+      "sha256": "4afc44860ae4012949a041550c5bcbe005259563fdad5fe637f7ed7a933a3a31",
+      "bytes": 3141580,
+      "content_type": "video/mp4",
+      "reused": false
     }
   },
   "errors": [],
@@ -4373,9 +4439,16 @@
       "reason": "Explicit all-x example placeholder; original text retained"
     }
   ],
-  "finished_at": "2026-09-13T09:50:20.241846+00:00",
-  "asset_bytes": 1816965107,
-  "asset_count": 393,
+  "readme": {
+    "source_path": "README.md",
+    "sha": "d9dee7ed5d7d4ff71e2023a56f0acfe5882894d3",
+    "path": "repository/README.md",
+    "original": "repository/README.original.md",
+    "metadata": "repository/README.json"
+  },
+  "finished_at": "2026-09-13T10:09:59.179161+00:00",
+  "asset_bytes": 1880901820,
+  "asset_count": 399,
   "records": {
     "issues": [
       "1",
@@ -4445,7 +4518,10 @@
       "63",
       "64",
       "65",
-      "66"
+      "66",
+      "67",
+      "68",
+      "69"
     ],
     "releases": [
       "387057376",
