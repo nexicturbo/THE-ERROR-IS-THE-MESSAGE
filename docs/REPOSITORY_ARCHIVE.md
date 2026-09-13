@@ -16,7 +16,7 @@ Repository settings or organization policy must permit Actions to write reposito
 
 - All open and closed **issues**, with each full issue comment.
 - All open and closed **pull requests**, general comments, review summaries, inline review comments/replies (`in_reply_to_id` and original context retained), and changed-file metadata/available patches.
-- **Releases**, full notes, paginated release assets/binaries, and repository tag metadata with commit references.
+- **Releases**, full notes, paginated release assets/binaries, generated source-code ZIP/TAR archives, and repository tag metadata with commit references. Source archives are pinned to the fetched tag commit when available. Cache reuse checks the release asset ID or tag commit as well as the saved bytes, so a replacement file or moved tag is refreshed.
 - The repository's main **README**, its original source/API metadata, and uploaded media referenced there.
 - GitHub-uploaded images, video, audio, PDFs and other files linked in those records, including Markdown, HTML `src` and bare attachment URLs. Legacy GitHub attachment hosts are recognized.
 - Raw JSON alongside readable Markdown. Readable copies point to the downloaded local assets; original URLs remain in raw JSON and the manifest.
@@ -41,7 +41,7 @@ Exit code `0`: every fetched record and recognized attachment succeeded within t
 
 ## Explicit scope and practical limits
 
-This is a sequential API snapshot: activity added during a run may arrive in the next run. It cannot recover deleted data, inaccessible/draft releases, or content hidden from the current token. Native **GitHub Discussions**, project boards, wikis, Actions artifacts/logs, individual reactions, release source-code ZIP/tar snapshots, and full git history are outside this issue/PR/release exporter. The repository already stores its own git history. API-provided changed-file patches can be truncated or absent for large/binary diffs; raw file metadata is retained, but this is not a replacement for a git clone.
+This is a sequential API snapshot: activity added during a run may arrive in the next run. It cannot recover deleted data, inaccessible/draft releases, or content hidden from the current token. Native **GitHub Discussions**, project boards, wikis, Actions artifacts/logs, individual reactions, and full git history are outside this issue/PR/release exporter. The repository already stores its own git history. API-provided changed-file patches can be truncated or absent for large/binary diffs; raw file metadata is retained, but this is not a replacement for a git clone.
 
 Externally hosted links are retained as links and are not fetched. Only recognized GitHub-uploaded attachments and release assets are downloaded. SVG/HTML/code attachments are archived as inert files, never executed by the exporter. Treat archived content as untrusted when viewing it in other programs.
 

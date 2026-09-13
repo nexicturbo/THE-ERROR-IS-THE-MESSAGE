@@ -99,7 +99,7 @@ def safe_download_url(url):
         host = (parsed.hostname or "").lower()
         return (parsed.scheme == "https" and not parsed.username and not parsed.password
                 and parsed.port in (None, 443)
-                and (host in {"github.com", "api.github.com", "githubusercontent.com",
+                and (host in {"github.com", "api.github.com", "codeload.github.com", "githubusercontent.com",
                               "github-production-user-asset-6210df.s3.amazonaws.com"}
                      or host.endswith(".githubusercontent.com")))
     except ValueError:
@@ -222,17 +222,18 @@ class Archive:
                          "complete": False, "counts": {}, "assets": self.assets, "errors": self.errors,
                          "ignored_urls": []}
 
-    def download(self, url, source, api_url=None):
+    def download(self, url, source, api_url=None, revision=None):
         if url in self.assets:
             if source not in self.assets[url]["sources"]:
                 self.assets[url]["sources"].append(source)
             return
-        entry = {"sources": [source], "status": "failed"}
+        entry = {"sources": [source], "status": "failed", "revision": revision}
         self.assets[url] = entry
         partial = None
         try:
             prior = self.previous.get(url, {})
-            if prior.get("status") == "saved" and verified_asset(self.output, prior):
+            if (prior.get("status") == "saved" and prior.get("revision") == revision
+                    and verified_asset(self.output, prior)):
                 size = prior["bytes"]
                 if size > self.max_asset_bytes or self.total_bytes + size > self.max_total_bytes:
                     raise RuntimeError("Verified cached asset exceeds configured size budget")
@@ -318,6 +319,7 @@ class Archive:
         if folder == "releases":
             lines += ["", "## Release files"]
             lines += [f"- [{item.get('name', 'asset')}]({item['browser_download_url']})" for item in record.get("assets", [])]
+            lines += [f"- [Source code ({item['format']})]({item['url']})" for item in record.get("source_archives", [])]
         rendered = "\n".join(lines) + "\n"
         for url, asset in sorted(self.assets.items(), key=lambda pair: -len(pair[0])):
             if asset["status"] == "saved":
@@ -368,6 +370,7 @@ class Archive:
             pulls = self.client.pages(prefix + "/pulls?state=all&sort=created&direction=asc")
             releases = self.client.pages(prefix + "/releases")
             tags = self.client.pages(prefix + "/tags")
+            tag_revisions = {tag["name"]: tag.get("commit", {}).get("sha") for tag in tags}
             dump_json(self.output / "metadata" / "tags.json", tags)
             self.manifest["counts"] = {"issues": len(issues), "pull_requests": len(pulls), "releases": len(releases), "tags": len(tags)}
             for item in issues:
@@ -387,7 +390,18 @@ class Archive:
             for item in releases:
                 item["assets"] = self.client.pages(f"{prefix}/releases/{item['id']}/assets")
                 for asset in item["assets"]:
-                    self.download(asset["browser_download_url"], f"releases/{item['id']}", asset["url"])
+                    self.download(asset["browser_download_url"], f"releases/{item['id']}", asset["url"],
+                                  revision=asset["url"])
+                item["source_archives"] = []
+                for kind in ("zipball", "tarball"):
+                    if not item.get(kind + "_url"):
+                        continue
+                    url = item[kind + "_url"]
+                    revision = tag_revisions.get(item["tag_name"])
+                    pinned = API + prefix + "/" + kind + "/" + revision if revision else url
+                    self.download(url, f"releases/{item['id']}", api_url=pinned, revision=revision or now())
+                    item["source_archives"].append({"format": kind, "url": url,
+                                                     "commit": revision, "download_url": pinned})
                 self.save_record("releases", item["id"], item)
                 print(f"Saved release {item.get('tag_name', item['id'])}", flush=True)
             self.save_readme(prefix)

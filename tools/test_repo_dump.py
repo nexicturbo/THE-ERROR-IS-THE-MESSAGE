@@ -103,6 +103,8 @@ class ExportTests(unittest.TestCase):
         self.assertIsNone(redirect.get_header("Authorization"))
         legacy = SafeRedirect().redirect_request(request, None, 302, "Found", {}, "https://github-production-user-asset-6210df.s3.amazonaws.com/x")
         self.assertIsNone(legacy.get_header("Authorization"))
+        source_zip = SafeRedirect().redirect_request(request, None, 302, "Found", {}, "https://codeload.github.com/o/r/zip/abc")
+        self.assertIsNone(source_zip.get_header("Authorization"))
         with self.assertRaises(RuntimeError):
             SafeRedirect().redirect_request(request, None, 302, "Found", {}, "https://evil.test/x")
         with self.assertRaises(RuntimeError):
@@ -151,6 +153,37 @@ class ExportTests(unittest.TestCase):
             client.json = lambda path: (_ for _ in ()).throw(RuntimeError("GitHub HTTP 404"))
             archive.save_readme("/repos/o/r")
             self.assertIsNone(archive.manifest["readme"])
+
+    def test_release_source_archives_are_preserved_and_pinned(self):
+        with tempfile.TemporaryDirectory() as directory:
+            client = FakeClient()
+            original_pages = client.pages
+            def pages(path):
+                records = original_pages(path)
+                if path.endswith("/releases"):
+                    records[0].update(zipball_url=API+"/repos/o/r/zipball/v1",
+                                      tarball_url=API+"/repos/o/r/tarball/v1")
+                return records
+            client.pages = pages
+            archive = Archive(client, "o/r", directory, 1000, 10000)
+            self.assertEqual(archive.run(), 0)
+            self.assertEqual(client.downloads, 4)
+            release = json.loads((Path(directory)/"releases/3.json").read_text())
+            self.assertEqual(len(release["source_archives"]), 2)
+            self.assertTrue(all(a["download_url"].endswith("/abc") for a in release["source_archives"]))
+            self.assertEqual(archive.assets[API+"/repos/o/r/zipball/v1"]["revision"], "abc")
+
+    def test_replaced_release_asset_is_not_reused_by_url_alone(self):
+        with tempfile.TemporaryDirectory() as directory:
+            client = FakeClient(asset=b"old")
+            url = "https://github.com/o/r/releases/download/v1/package.zip"
+            first = Archive(client, "o/r", directory, 1000, 10000)
+            first.download(url, "releases/1", revision="asset-id-1")
+            client.asset = b"new release bytes"
+            second = Archive(client, "o/r", directory, 1000, 10000)
+            second.download(url, "releases/1", revision="asset-id-2")
+            self.assertEqual(client.downloads, 2)
+            self.assertEqual((Path(directory)/second.assets[url]["path"]).read_bytes(), client.asset)
 
     def test_oversized_asset_is_failure_not_silent_truncation(self):
         with tempfile.TemporaryDirectory() as directory:
